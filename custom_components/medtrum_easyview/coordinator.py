@@ -24,7 +24,12 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class MedtrumEasyViewDataUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching data from the API. single endpoint."""
+    """
+    Class to manage fetching data from the API. single endpoint.
+
+    `data` is a mapping of patient uid to that patient's status blocks, so one
+    poll can feed the entities of more than one patient.
+    """
 
     config_entry: ConfigEntry
 
@@ -43,7 +48,7 @@ class MedtrumEasyViewDataUpdateCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(minutes=REFRESH_RATE_MIN),
         )
 
-    async def _async_update_data(self) -> dict[str, Any]:
+    async def _async_update_data(self) -> dict[str, dict[str, Any]]:
         """Update data via library."""
         try:
             return await self.client.async_get_data()

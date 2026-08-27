@@ -50,8 +50,10 @@ class MedtrumEasyViewApiClient:
         self.login_url = base_url + LOGIN_URL
         self.status_url = base_url + STATUS_URL
         self._session = session
+        self.uid: str | None = None
+        self.realname: str | None = None
 
-    async def async_login(self) -> Any:
+    async def async_login(self) -> str:
         """Get token from the API."""
         response_login = await api_wrapper(
             self._session,
@@ -82,8 +84,25 @@ class MedtrumEasyViewApiClient:
 
         return self.uid
 
-    async def async_get_data(self) -> Any:
-        """Get data from the API."""
+    async def async_get_patients(self) -> dict[str, str]:
+        """
+        Return {patient uid: display name} for every patient this account sees.
+
+        A patient account only ever sees itself, and the login response already
+        carries both values, so this needs no extra request.
+        """
+        if self.uid is None:
+            await self.async_login()
+        return {self.uid: self.realname}
+
+    async def async_get_data(self) -> dict[str, dict[str, Any]]:
+        """
+        Get data from the API, keyed by patient uid.
+
+        The status blocks are lifted out of the response and the `chart`
+        history is dropped: no entity reads it, and it is by far the largest
+        part of the payload.
+        """
         # Create param with base64 encoded timestamp data for current day
         now = datetime.now(UTC)
         start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -122,16 +141,14 @@ class MedtrumEasyViewApiClient:
         # if response["error"] == 0:
         data = response["data"]
 
-        # Add uid, realname to the data for later use.
-        data["uid"] = self.uid
-        data["realname"] = self.realname
-
-        _LOGGER.debug(
-            "Raw data: %s",
-            data,
-        )
-
-        return data
+        return {
+            self.uid: {
+                "uid": self.uid,
+                "real_name": self.realname,
+                "pump_status": data.get("pump_status") or {},
+                "sensor_status": data.get("sensor_status") or {},
+            }
+        }
 
 
 ################################################################
