@@ -7,7 +7,7 @@ LOGGER: Logger = getLogger(__package__)
 
 NAME = "Medtrum EasyView"
 DOMAIN = "medtrum_easyview"
-VERSION = "1.0.2"
+VERSION = "1.1.0"
 ATTRIBUTION = "Data provided by https://easyview.medtrum.eu"
 # Patient ("EasyView") endpoints. JSON bodies, authenticated by the cookie the
 # login response sets, and answering with error=0 on success.

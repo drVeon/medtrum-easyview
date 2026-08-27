@@ -23,6 +23,14 @@ Platform | Description
 - Last Bolus Delivered Time
 - Last Bolus Delivered Volume
 - Active Insulin
+- Glucose Value (the current CGM reading, in the unit you select)
+- Glucose Trend
+- Sensor Last update
+- Sensor Battery (diagnostic)
+
+Entities are created per patient and only for the values that patient's
+devices actually publish, so an AutoMode patch gets a smaller set than a
+classic one.
 
 `binary_sensor` | Show binary states from Medtrum EasyView API.
 - Basal Active
@@ -40,10 +48,28 @@ Platform | Description
 
 ## Configuration is done in the UI
 
-You need a Medtrum EasyView account to use this integration
+You need a Medtrum account to use this integration. Two kinds work, and you
+pick which one you are using when you add the integration:
 
-- Use username (mail) and password of the Medtrum EasyView account.
-- A token will be retreived for the duration of the HA session.
+- **Patient (EasyView)** — the account of the person wearing the pump. It sees
+  that one patient.
+- **Follower (EasyFollow)** — a monitor account that has been invited to follow
+  one or more patients. A single config entry then covers **every** patient the
+  account follows, each with its own device.
+
+In both cases:
+
+- Use the username (mail) and password of that account.
+- A session is retrieved for the duration of the HA session and renewed
+  automatically when the server rejects it.
+
+Existing installations keep working unchanged: entries created before follower
+support existed are treated as patient accounts.
+
+## API reference
+
+The endpoints and payloads both account types use are documented in
+[docs/API.md](docs/API.md).
 
 
 ## Contributions are welcome!
