@@ -13,15 +13,14 @@ LOGIN_URL = "/v3/api/v2.0/login"
 STATUS_URL = "/api/v2.1/monitor/$userid/status"
 APP_TAG = "v=3.0.2(15);n=eyvw"
 COUNTRY = "Country"
-COUNTRY_LIST = [
-    "GlobalEurope",
-    "France",
-]
 BASE_URL_LIST = {
     "Global": "https://easyview.medtrum.eu",
     "Europe": "https://easyview.medtrum.eu",
     "France": "https://easyview.medtrum.fr",
 }
+# Derived from BASE_URL_LIST so the config flow can only ever offer a country
+# that resolves to a base URL.
+COUNTRY_LIST = list(BASE_URL_LIST)
 CONTENT_TYPE = "application/json"
 MMOL_L = "mmol/L"
 MG_DL = "mg/dL"
