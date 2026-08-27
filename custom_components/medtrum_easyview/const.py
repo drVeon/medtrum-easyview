@@ -51,6 +51,13 @@ CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
 MMOL_L = "mmol/L"
 MG_DL = "mg/dL"
 MMOL_DL_TO_MG_DL = 18
+
+# Glucose concentrations are reported in the *account's* display unit, which
+# the payload never states, so the unit has to be inferred from the value. The
+# valid ranges do not overlap - 36..600 mg/dL is 2..33.3 mmol/L - so a value at
+# or below the mmol ceiling can only be mmol/L.
+GLUCOSE_CONVERSION_FACTOR = 18.0182
+GLUCOSE_MMOL_MAX = 33.3
 REFRESH_RATE_MIN = 1
 API_TIME_OUT_SECONDS = 20
 
@@ -66,6 +73,9 @@ BASAL_ICON = "mdi:water-sync"
 BOLUS_ICON = "mdi:water-plus"
 VOLUME_ICON = "mdi:gauge"
 REMAINING_TIME_ICON = "mdi:clock-end"
+BATTERY_ICON = "mdi:battery"
+TREND_FLAT_ICON = "mdi:arrow-right"
+TREND_UNKNOWN_ICON = "mdi:help-circle-outline"
 
 
 class DeviceType(StrEnum):
@@ -110,3 +120,37 @@ class PumpStatus(IntEnum):
 
     # Special states
     DELIVERY_STOPPED = 128
+
+
+# glucoseRate trend codes: 1-3 rising with increasing steepness, 4-6 falling
+# with increasing steepness, 0 and 8 flat, 7 unknown.
+GLUCOSE_TREND_UNKNOWN = "Unknown"
+GLUCOSE_TRENDS: dict[int, str] = {
+    0: "Flat",
+    1: "Rising Slowly",
+    2: "Rising",
+    3: "Rising Quickly",
+    4: "Falling Slowly",
+    5: "Falling",
+    6: "Falling Quickly",
+    7: GLUCOSE_TREND_UNKNOWN,
+    8: "Flat",
+}
+GLUCOSE_TREND_ICONS: dict[int, str] = {
+    0: TREND_FLAT_ICON,
+    1: "mdi:arrow-top-right",
+    2: "mdi:arrow-up",
+    3: "mdi:arrow-up-bold",
+    4: "mdi:arrow-bottom-right",
+    5: "mdi:arrow-down",
+    6: "mdi:arrow-down-bold",
+    7: TREND_UNKNOWN_ICON,
+    8: TREND_FLAT_ICON,
+}
+
+# A sensor reporting glucose 0.0 is not reading zero, it has no value. The
+# reason is disambiguated by the sequence counter (2 minutes per step).
+SENSOR_WARMUP_MAX_SEQUENCE = 15
+SENSOR_STATE_WARMUP = "Warm-up"
+SENSOR_STATE_NEEDS_CALIBRATION = "Calibration required"
+SENSOR_STATE_NO_VALID_VALUE = "No valid value"
