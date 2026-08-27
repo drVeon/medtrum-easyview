@@ -11,7 +11,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .api import (
     MedtrumEasyViewApiAuthenticationError,
-    MedtrumEasyViewApiClient,
+    MedtrumEasyViewApiClientBase,
     MedtrumEasyViewApiError,
 )
 from .const import DOMAIN, LOGGER, REFRESH_RATE_MIN
@@ -36,7 +36,7 @@ class MedtrumEasyViewDataUpdateCoordinator(DataUpdateCoordinator):
     def __init__(
         self,
         hass: HomeAssistant,
-        client: MedtrumEasyViewApiClient,
+        client: MedtrumEasyViewApiClientBase,
     ) -> None:
         """Initialize."""
         self.client = client

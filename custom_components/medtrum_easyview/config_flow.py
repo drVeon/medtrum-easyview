@@ -2,24 +2,29 @@
 
 from __future__ import annotations
 
-import logging
-
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_UNIT_OF_MEASUREMENT, CONF_USERNAME
 from homeassistant.helpers import selector
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .api import (
     MedtrumEasyViewApiAuthenticationError,
-    MedtrumEasyViewApiClient,
     MedtrumEasyViewApiError,
     MedtrumEasyViewCommunicationError,
+    async_create_api_client,
 )
-from .const import BASE_URL_LIST, COUNTRY, COUNTRY_LIST, DOMAIN, LOGGER, MG_DL, MMOL_L
-
-# GVS: Init logger
-_LOGGER = logging.getLogger(__name__)
+from .const import (
+    ACCOUNT_TYPE,
+    ACCOUNT_TYPE_LIST,
+    ACCOUNT_TYPE_PATIENT,
+    BASE_URL_LIST,
+    COUNTRY,
+    COUNTRY_LIST,
+    DOMAIN,
+    LOGGER,
+    MG_DL,
+    MMOL_L,
+)
 
 
 class MedtrumEasyViewFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -35,7 +40,8 @@ class MedtrumEasyViewFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         _errors = {}
         if user_input is not None:
             try:
-                await self._test_credentials(
+                uid, patients = await self._test_credentials(
+                    account_type=user_input[ACCOUNT_TYPE],
                     username=user_input[CONF_USERNAME],
                     password=user_input[CONF_PASSWORD],
                     base_url=BASE_URL_LIST.get(user_input[COUNTRY])
@@ -51,10 +57,18 @@ class MedtrumEasyViewFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 LOGGER.exception(exception)
                 _errors["base"] = "unknown"
             else:
-                return self.async_create_entry(
-                    title=user_input[CONF_USERNAME],
-                    data=user_input,
-                )
+                if not patients:
+                    # A follower account linked to nobody has nothing to
+                    # create entities from.
+                    _errors["base"] = "no_patient"
+                else:
+                    if uid is not None:
+                        await self.async_set_unique_id(uid)
+                        self._abort_if_unique_id_configured()
+                    return self.async_create_entry(
+                        title=user_input[CONF_USERNAME],
+                        data=user_input,
+                    )
 
         return self.async_show_form(
             step_id="user",
@@ -74,6 +88,15 @@ class MedtrumEasyViewFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         ),
                     ),
                     vol.Required(
+                        ACCOUNT_TYPE,
+                        default=ACCOUNT_TYPE_PATIENT,
+                    ): selector.SelectSelector(
+                        selector.SelectSelectorConfig(
+                            options=ACCOUNT_TYPE_LIST,
+                            translation_key=ACCOUNT_TYPE,
+                        ),
+                    ),
+                    vol.Required(
                         COUNTRY,
                         description="Country",
                         default=(COUNTRY_LIST[0]),
@@ -88,14 +111,26 @@ class MedtrumEasyViewFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def _test_credentials(
-        self, username: str, password: str, base_url: str
-    ) -> None:
-        """Validate credentials."""
-        client = MedtrumEasyViewApiClient(
+        self,
+        account_type: str,
+        username: str,
+        password: str,
+        base_url: str,
+    ) -> tuple[str | None, dict[str, str]]:
+        """
+        Validate credentials and report what the account can see.
+
+        A follower account that is not linked to any patient authenticates
+        successfully but would produce no entities, so the patients are
+        enumerated here rather than at the first poll.
+        """
+        client = async_create_api_client(
+            self.hass,
+            account_type,
             username=username,
             password=password,
             base_url=base_url,
-            session=async_create_clientsession(self.hass),
         )
 
-        await client.async_login()
+        uid = await client.async_login()
+        return uid, await client.async_get_patients()

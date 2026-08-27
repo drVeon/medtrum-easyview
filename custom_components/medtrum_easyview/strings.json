@@ -8,18 +8,31 @@
         "data": {
           "username": "Mail",
           "password": "Password",
+          "account_type": "Account type",
           "Country": "Select your region",
           "unit_of_measurement": "Unit for glucose measurement"
+        },
+        "data_description": {
+          "account_type": "A follower account shows every patient it has been invited to follow."
         }
       }
     },
     "error": {
       "auth": "Username/Password is wrong.",
       "connection": "Unable to connect to the server.",
+      "no_patient": "This account is not linked to any patient.",
       "unknown": "Unknown error occurred."
     },
     "abort": {
       "already_configured": "Device is already configured"
+    }
+  },
+  "selector": {
+    "account_type": {
+      "options": {
+        "patient": "Patient (EasyView)",
+        "follower": "Follower (EasyFollow)"
+      }
     }
   }
 }

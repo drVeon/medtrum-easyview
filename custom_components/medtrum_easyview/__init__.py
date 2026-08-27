@@ -6,14 +6,19 @@ import logging
 from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
 
-from .api import MedtrumEasyViewApiClient
-from .const import BASE_URL_LIST, COUNTRY, DOMAIN
+from .api import async_create_api_client
+from .const import (
+    ACCOUNT_TYPE,
+    ACCOUNT_TYPE_PATIENT,
+    BASE_URL_LIST,
+    COUNTRY,
+    DOMAIN,
+)
 from .coordinator import MedtrumEasyViewDataUpdateCoordinator
 
 PLATFORMS: list[Platform] = [
@@ -27,21 +32,24 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration using UI."""
+    # Entries created before follower support existed carry no account type.
+    account_type = entry.data.get(ACCOUNT_TYPE, ACCOUNT_TYPE_PATIENT)
+
     _LOGGER.debug(
-        "async_setup_entry entry: entry_id= %s, user= %s BaseUrl= %s",
+        "async_setup_entry entry: entry_id= %s, user= %s BaseUrl= %s account= %s",
         entry.entry_id,
         entry.data[CONF_USERNAME],
         BASE_URL_LIST.get(entry.data[COUNTRY]),
+        account_type,
     )
     hass.data.setdefault(DOMAIN, {})
 
-    #    Using the declared API for login based on patient credentials.
-
-    my_medtrum_easyview = MedtrumEasyViewApiClient(
+    my_medtrum_easyview = async_create_api_client(
+        hass,
+        account_type,
         username=entry.data[CONF_USERNAME],
         password=entry.data[CONF_PASSWORD],
         base_url=BASE_URL_LIST.get(entry.data[COUNTRY]) or BASE_URL_LIST["Global"],
-        session=async_get_clientsession(hass),
     )
 
     # Validate credentials

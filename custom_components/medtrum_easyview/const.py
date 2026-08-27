@@ -9,9 +9,34 @@ NAME = "Medtrum EasyView"
 DOMAIN = "medtrum_easyview"
 VERSION = "1.0.2"
 ATTRIBUTION = "Data provided by https://easyview.medtrum.eu"
-LOGIN_URL = "/v3/api/v2.0/login"
-STATUS_URL = "/api/v2.1/monitor/$userid/status"
-APP_TAG = "v=3.0.2(15);n=eyvw"
+# Patient ("EasyView") endpoints. JSON bodies, authenticated by the cookie the
+# login response sets, and answering with error=0 on success.
+PATIENT_LOGIN_URL = "/v3/api/v2.0/login"
+PATIENT_STATUS_URL = "/api/v2.1/monitor/$userid/status"
+PATIENT_APP_TAG = "v=3.0.2(15);n=eyvw"
+USER_TYPE_PATIENT = "P"
+
+# Follower ("EasyFollow") endpoints. Form-encoded bodies, authenticated by the
+# session cookie replayed verbatim, and answering with res="OK" on success. One
+# call returns the state of every patient the account is allowed to see.
+FOLLOWER_LOGIN_URL = "/mobile/ajax/login"
+FOLLOWER_LOGINDATA_URL = "/mobile/ajax/logindata"
+FOLLOWER_MONITOR_URL = "/mobile/ajax/monitor?flag=monitor_list"
+FOLLOWER_APP_TAG = "v=1.2.70(112);n=eyfo;p=android"
+FOLLOWER_DEV_INFO = "Android 11;Google generic_x86_arm;Android 11"
+FOLLOWER_USER_AGENT = "okhttp/3.5.0"
+# "M" = monitor/follower: a patient account cannot read the monitor list.
+USER_TYPE_FOLLOWER = "M"
+APP_TYPE_FOLLOW = "Follow"
+LOGIN_PLATFORM = "google"
+
+# Which of the two APIs a config entry talks to. Entries written before
+# follower support existed have no such key, so patient is the default.
+ACCOUNT_TYPE = "account_type"
+ACCOUNT_TYPE_PATIENT = "patient"
+ACCOUNT_TYPE_FOLLOWER = "follower"
+ACCOUNT_TYPE_LIST = [ACCOUNT_TYPE_PATIENT, ACCOUNT_TYPE_FOLLOWER]
+
 COUNTRY = "Country"
 BASE_URL_LIST = {
     "Global": "https://easyview.medtrum.eu",
@@ -22,6 +47,7 @@ BASE_URL_LIST = {
 # that resolves to a base URL.
 COUNTRY_LIST = list(BASE_URL_LIST)
 CONTENT_TYPE = "application/json"
+CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
 MMOL_L = "mmol/L"
 MG_DL = "mg/dL"
 MMOL_DL_TO_MG_DL = 18

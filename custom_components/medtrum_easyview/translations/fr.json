@@ -8,15 +8,28 @@
         "data": {
           "username": "Mail utilisateur",
           "password": "Mot de passe",
+          "account_type": "Type de compte",
           "Country": "Sélectionnez votre région",
           "unit_of_measurement": "Unité pour la mesure de glucose"
+        },
+        "data_description": {
+          "account_type": "Un compte suiveur affiche tous les patients qu'il a été invité à suivre."
         }
       }
     },
     "error": {
       "auth": "Mail/Mot de passe est incorrect.",
       "connection": "Impossible de se connecter au serveur.",
+      "no_patient": "Ce compte n'est lié à aucun patient.",
       "unknown": "Une erreur inconnue est survenue."
+    }
+  },
+  "selector": {
+    "account_type": {
+      "options": {
+        "patient": "Patient (EasyView)",
+        "follower": "Suiveur (EasyFollow)"
+      }
     }
   }
 }
