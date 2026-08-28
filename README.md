@@ -4,9 +4,9 @@
 
 # Medtrum EasyView Integration for Home Assistant
 
-[integration_medtrum-easyview]: https://github.com/sapk/medtrum-easyview.git
+[integration_medtrum-easyview]: https://github.com/drVeon/medtrum-easyview.git
 
-**This integration will set up the following platforms for each patient linked to the Medtrum EasyView account.**
+**This integration will set up the following platforms for each patient linked to the Medtrum EasyView or EasyFollow account.**
 
 Platform | Description
 -- | --
@@ -76,6 +76,9 @@ The endpoints and payloads both account types use are documented in
 
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
 
+This project was forked from [Medtrum EasyView Integration](https://github.com/sapk/medtrum-easyview.git)
 
-This project is heavily inspired from [librelink integration](https://github.com/gillesvs/librelink.git)
+Used EasyFollow API request flow from [GlucoDataHandler](https://github.com/pachi81/GlucoDataHandler.git)
+
+EasyFollow integration has been added using AI-assisted development.
 ***
