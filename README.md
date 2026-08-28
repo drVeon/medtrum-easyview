@@ -1,6 +1,6 @@
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://img.shields.io/badge/HACS-Repository-41BDF5.svg)](https://my.home-assistant.io/redirect/hacs_repository/?category=integration&repository=medtrum-easyview&owner=sapk)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://img.shields.io/badge/HACS-Repository-41BDF5.svg)](https://my.home-assistant.io/redirect/hacs_repository/?category=integration&repository=medtrum-easyview&owner=drVeon)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
-[![Validate with Hassfest/HACS](https://github.com/sapk/medtrum-easyview/actions/workflows/validate.yml/badge.svg)](https://github.com/sapk/medtrum-easyview/actions/workflows/validate.yml)
+[![Validate with Hassfest/HACS](https://github.com/drVeon/medtrum-easyview/actions/workflows/validate.yml/badge.svg)](https://github.com/drVeon/medtrum-easyview/actions/workflows/validate.yml)
 
 # Medtrum EasyView Integration for Home Assistant
 
