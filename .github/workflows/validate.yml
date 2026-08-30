@@ -7,9 +7,11 @@ on:
   push:
     branches:
       - main
+      - "follower-api-support"
   pull_request:
     branches:
       - main
+      - "follower-api-support"
 
 permissions: {}
 
@@ -19,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v7"
 
       - name: Run Hassfest validation
         uses: "home-assistant/actions/hassfest@master"
