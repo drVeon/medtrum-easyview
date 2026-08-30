@@ -4,7 +4,6 @@
     "step": {
       "user": {
         "title": "Entrez votre mail et mot de passe",
-        "description": "Documentation: https://github.com/sapk/medtrum-easyview",
         "data": {
           "username": "Mail utilisateur",
           "password": "Mot de passe",
