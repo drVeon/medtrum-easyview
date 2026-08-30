@@ -4,6 +4,7 @@
     "step": {
       "user": {
         "title": "Enter your mail and password",
+        "description": "",
         "data": {
           "username": "Mail",
           "password": "Password",

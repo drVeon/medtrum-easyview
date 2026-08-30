@@ -4,6 +4,7 @@
     "step": {
       "user": {
         "title": "Entrez votre mail et mot de passe",
+        "description": "",
         "data": {
           "username": "Mail utilisateur",
           "password": "Mot de passe",
